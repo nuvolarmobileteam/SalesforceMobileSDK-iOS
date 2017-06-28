@@ -175,6 +175,13 @@ static NSString* ailtnAppName = nil;
     return _isLaunching;
 }
 
+- (void)resetCurrentLaunching
+{
+    if (_isLaunching) {
+        _isLaunching = NO;
+    }
+}
+
 - (NSString *)connectedAppId
 {
     return [SFAuthenticationManager sharedManager].oauthClientId;
