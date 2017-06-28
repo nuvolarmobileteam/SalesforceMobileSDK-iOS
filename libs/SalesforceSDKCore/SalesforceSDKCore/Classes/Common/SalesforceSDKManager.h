@@ -244,6 +244,8 @@ typedef void (^SFSnapshotViewControllerDismissalBlock)(UIViewController* snapsho
  */
 - (BOOL)launch;
 
+- (void)resetCurrentLaunching;
+
 /**
  Adds an SDK Manager delegate to the list of delegates.
  @param delegate The delegate to add.
