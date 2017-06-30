@@ -28,6 +28,7 @@
 
 @property (nonnull, nonatomic, strong, readwrite) NSMutableURLRequest *request;
 @property (nullable, nonatomic, copy) NSInputStream * _Nullable (^requestBodyStreamBlock)(void);
+@property (nullable, nonatomic, copy) NSData * _Nullable requestBodyData;
 @property (nullable, nonatomic, copy) NSDictionary *requestBodyAsDictionary;
 @property (nullable, nonatomic, copy) NSString *requestContentType;
 

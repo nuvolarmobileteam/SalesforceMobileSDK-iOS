@@ -92,6 +92,7 @@ NSString * const kSFDefaultRestEndpoint = @"/services/data";
     NSInputStream *(^bodyStreamBlock)(void) = ^{
         return [NSInputStream inputStreamWithData:bodyData];
     };
+    self.requestBodyData = bodyData;
     [self setCustomRequestBodyStream:bodyStreamBlock contentType:contentType];
 }
 
@@ -171,6 +172,9 @@ NSString * const kSFDefaultRestEndpoint = @"/services/data";
             if (self.requestContentType != nil) {
                 [self.request setValue:self.requestContentType forHTTPHeaderField:@"Content-Type"];
                 self.request.HTTPBodyStream = self.requestBodyStreamBlock();
+                
+                //Set Content-Length to avoid 411 http server error
+                [self.request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)self.requestBodyData.length] forHTTPHeaderField:@"Content-Length"];
             }
         }
         return self.request;
@@ -192,7 +196,64 @@ NSString * const kSFDefaultRestEndpoint = @"/services/data";
 }
 
 #pragma mark - Upload
-
+- (void)addPostFileData:(NSData *)fileData description:(NSString *)description fileName:(NSString *)fileName mimeType:(NSString *)mimeType {
+    NSString *mpeBoundary = @"************************";
+    NSString *mpeSeparator = @"--";
+    NSString *newline = @"\r\n";
+    NSString *bodyContentDisposition = [NSString stringWithFormat:@"Content-Disposition: form-data; name=\"fileData\"; filename=\"%@\"", fileName];
+    NSMutableData *body = [NSMutableData data];
+    
+    //--@"************************"
+    [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, newline] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //Content-Disposition: form-data; name=“fileData”; filename=“File_Name.EXT”
+    [body appendData:[bodyContentDisposition dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //Content-Type: image/jpeg
+    [body appendData:[[NSString stringWithFormat:@"Content-Type: image/jpeg%@", newline] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //**********DATA HERE******
+    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:fileData];
+    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //--@"************************"
+    [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, newline] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //Content-Disposition: form-data; name=“title”
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"title\"%@", newline] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //File_Name.EXT
+    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"%@%@", fileName, newline] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    //--@"************************"
+    [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, mpeSeparator] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    /*
+     NSMutableDictionary *params = [NSMutableDictionary dictionary];
+     if (fileName) {
+     params[@"title"] = fileName;
+     }
+     if (description) {
+     params[@"desc"] = description;
+     }
+     NSError *parsingError;
+     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params
+     options:NSJSONWritingPrettyPrinted
+     error:&parsingError];
+     if (jsonData && !parsingError) {
+     [body appendData:jsonData];
+     }
+     */
+    
+    [self setCustomRequestBodyData:body contentType:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", mpeBoundary]];
+    [self.request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [self.request setHTTPShouldHandleCookies:NO];
+    [self setHeaderValue:@"Keep-Alive" forHeaderName:@"Connection"];
+}
+/*
 - (void)addPostFileData:(NSData *)fileData description:(NSString *)description fileName:(NSString *)fileName mimeType:(NSString *)mimeType {
     NSString *mpeBoundary = @"************************";
     NSString *mpeSeparator = @"--";
@@ -228,7 +289,7 @@ NSString * const kSFDefaultRestEndpoint = @"/services/data";
     [self.request setHTTPShouldHandleCookies:NO];
     [self setHeaderValue:@"Keep-Alive" forHeaderName:@"Connection"];
 }
-
+*/
 + (BOOL)isNetworkError:(NSError *)error {
     switch (error.code) {
         case kCFURLErrorNotConnectedToInternet:
