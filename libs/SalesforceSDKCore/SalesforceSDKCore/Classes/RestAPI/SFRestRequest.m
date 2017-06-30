@@ -231,65 +231,12 @@ NSString * const kSFDefaultRestEndpoint = @"/services/data";
     //--@"************************"
     [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, mpeSeparator] dataUsingEncoding:NSUTF8StringEncoding]];
     
-    /*
-     NSMutableDictionary *params = [NSMutableDictionary dictionary];
-     if (fileName) {
-     params[@"title"] = fileName;
-     }
-     if (description) {
-     params[@"desc"] = description;
-     }
-     NSError *parsingError;
-     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params
-     options:NSJSONWritingPrettyPrinted
-     error:&parsingError];
-     if (jsonData && !parsingError) {
-     [body appendData:jsonData];
-     }
-     */
-    
     [self setCustomRequestBodyData:body contentType:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", mpeBoundary]];
     [self.request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
     [self.request setHTTPShouldHandleCookies:NO];
     [self setHeaderValue:@"Keep-Alive" forHeaderName:@"Connection"];
 }
-/*
-- (void)addPostFileData:(NSData *)fileData description:(NSString *)description fileName:(NSString *)fileName mimeType:(NSString *)mimeType {
-    NSString *mpeBoundary = @"************************";
-    NSString *mpeSeparator = @"--";
-    NSString *newline = @"\r\n";
-    NSString *bodyContentDisposition = [NSString stringWithFormat:@"Content-Disposition: form-data; name=fileData; filename=\"%@\"", fileName];
-    NSMutableData *body = [NSMutableData data];
-    [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, newline] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"Content-Type: application/json; charset=UTF-8%@", newline] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"json\"%@", newline] dataUsingEncoding:NSUTF8StringEncoding]];
-    NSMutableDictionary *params = [NSMutableDictionary dictionary];
-    if (fileName) {
-        params[@"title"] = fileName;
-    }
-    if (description) {
-        params[@"desc"] = description;
-    }
-    NSError *parsingError;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:params
-                                                       options:NSJSONWritingPrettyPrinted
-                                                         error:&parsingError];
-    if (jsonData && !parsingError) {
-        [body appendData:jsonData];
-    }
-    [body appendData:[[NSString stringWithFormat:@"%@%@%@", mpeSeparator, mpeBoundary, newline] dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[bodyContentDisposition dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:fileData];
-    [body appendData:[newline dataUsingEncoding:NSUTF8StringEncoding]];
-    [body appendData:[[NSString stringWithFormat:@"%@%@%@%@", mpeSeparator, mpeBoundary, mpeSeparator, newline] dataUsingEncoding:NSUTF8StringEncoding]];
-    [self setCustomRequestBodyData:body contentType:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", mpeBoundary]];
-    [self.request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
-    [self.request setHTTPShouldHandleCookies:NO];
-    [self setHeaderValue:@"Keep-Alive" forHeaderName:@"Connection"];
-}
-*/
+
 + (BOOL)isNetworkError:(NSError *)error {
     switch (error.code) {
         case kCFURLErrorNotConnectedToInternet:
