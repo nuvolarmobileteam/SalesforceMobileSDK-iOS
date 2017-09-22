@@ -62,7 +62,7 @@
 {
     if (_mainWindow == nil) {
         // Try to set a sane value for mainWindow, if it hasn't been set already.
-        _mainWindow = [SFApplicationHelper sharedApplication].windows[0];
+        _mainWindow = [[SFApplicationHelper sharedApplication].windows firstObject];
         if (_mainWindow == nil) {
             [SFSDKCoreLogger e:[self class] format:@"UIApplication has no defined windows."];
         }

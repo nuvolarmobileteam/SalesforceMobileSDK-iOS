@@ -243,7 +243,7 @@ static NSString* ailtnAppName = nil;
     _isLaunching = YES;
     self.launchActions = SFSDKLaunchActionNone;
     if ([SFRootViewManager sharedManager].mainWindow == nil) {
-        [SFRootViewManager sharedManager].mainWindow = [SFApplicationHelper sharedApplication].windows[0];
+        [SFRootViewManager sharedManager].mainWindow = [[SFApplicationHelper sharedApplication].windows firstObject];
     }
     
     NSError *launchStateError = nil;
