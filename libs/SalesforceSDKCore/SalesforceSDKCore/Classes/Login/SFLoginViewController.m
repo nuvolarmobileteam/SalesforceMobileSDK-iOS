@@ -179,6 +179,10 @@
         _oauthView = oauthView;
         if (nil != _oauthView) {
             [self.view addSubview:_oauthView];
+            
+            if (@available(iOS 11.0, *)) {
+                [((WKWebView *)_oauthView).scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+            }
             [self layoutViews];
         }
     }
