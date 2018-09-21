@@ -15,7 +15,7 @@
 	url = https://github.com/sammcewan/WYPopoverController
 [submodule "external/CocoaLumberjack"]
 	path = external/CocoaLumberjack
-	url=https://github.com/forcedotcom/CocoaLumberjack.git
+url=https://github.com/nuvolarmobileteam/CocoaLumberjack.git
 [submodule "external/cordova-plugin-wkwebview-engine"]
 	path = external/cordova-plugin-wkwebview-engine
 	url = https://github.com/apache/cordova-plugin-wkwebview-engine
